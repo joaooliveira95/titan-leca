@@ -1,0 +1,34 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  flex: none;
+  min-width: 0;
+}
+
+.lockup,
+.mark {
+  display: block;
+  color: inherit;
+}
+
+.lockup {
+  height: 2.55rem;
+}
+
+.mark {
+  height: 1.7rem;
+}
+
+.lockup svg,
+.mark svg {
+  display: block;
+  height: 100%;
+  width: auto;
+}
+
+@media (max-width: 420px) {
+  .lockup {
+    height: 2.05rem;
+  }
+}

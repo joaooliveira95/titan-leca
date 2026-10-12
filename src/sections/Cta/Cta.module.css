@@ -1,0 +1,79 @@
+.cta {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(16rem, 0.75fr);
+  background: var(--color-dark);
+  color: var(--color-cream);
+}
+
+.copy,
+.panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 24rem;
+}
+
+.copy {
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3.5rem)
+    clamp(2.5rem, 6vw, 5rem) max(var(--page-padding), calc((100vw - var(--content)) / 2));
+}
+
+.kicker {
+  margin-bottom: 1rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(247, 244, 238, 0.72);
+}
+
+.copy h2 {
+  margin-bottom: 1rem;
+  font-size: clamp(2.7rem, 5.4vw, 4.8rem);
+  font-weight: 750;
+  letter-spacing: var(--tracking-display);
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.copy p {
+  max-width: 28ch;
+  color: rgba(247, 244, 238, 0.78);
+  font-size: 1.05rem;
+}
+
+.panel {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  padding: clamp(2rem, 4vw, 3.5rem);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+@media (max-width: 767px) {
+  .cta {
+    grid-template-columns: 1fr;
+  }
+
+  .copy,
+  .panel {
+    min-height: 0;
+  }
+
+  .copy {
+    padding: 3rem var(--page-padding) 2rem;
+  }
+
+  .panel {
+    padding: 1.5rem var(--page-padding) 2.5rem;
+  }
+
+  .actions :global(a) {
+    width: 100%;
+  }
+}

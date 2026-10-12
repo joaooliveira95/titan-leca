@@ -1,0 +1,20 @@
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(.js) .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition:
+      opacity 0.72s var(--ease),
+      transform 0.72s var(--ease);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  :global(.js) .reveal[data-inview] {
+    opacity: 1;
+    transform: none;
+  }
+}
