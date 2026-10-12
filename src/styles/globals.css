@@ -35,6 +35,14 @@ html {
   scrollbar-width: auto;
 }
 
+html.is-intro {
+  overflow: hidden;
+}
+
+html.is-intro:not(.is-revealing) main {
+  pointer-events: none;
+}
+
 html::-webkit-scrollbar {
   width: 12px;
   height: 12px;

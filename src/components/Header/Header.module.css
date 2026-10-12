@@ -5,6 +5,29 @@
   color: var(--color-text);
 }
 
+:global(html.is-intro:not(.is-revealing)) .header {
+  opacity: 0;
+  transform: translateY(-5px);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(html.is-revealing) .header {
+    animation: header-in 0.5s var(--ease) both;
+  }
+}
+
+@keyframes header-in {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .bar {
   display: flex;
   align-items: center;

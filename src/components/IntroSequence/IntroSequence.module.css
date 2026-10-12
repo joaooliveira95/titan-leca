@@ -1,0 +1,222 @@
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  background: var(--color-background);
+  pointer-events: none;
+  animation: intro-exit 2.6s linear both;
+}
+
+.stage {
+  position: relative;
+  width: min(100vw, calc(100dvh * 16 / 9));
+  height: min(100dvh, calc(100vw * 9 / 16));
+}
+
+.stage[data-art='portrait'] {
+  width: min(100vw, calc(100dvh * 16 / 9));
+}
+
+.origin,
+.shot,
+.shot picture,
+.shot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.shot picture {
+  display: block;
+}
+
+.shot img {
+  object-fit: cover;
+  object-position: var(--shot-position, center);
+  opacity: 0;
+}
+
+.shot[data-ready] img {
+  opacity: 1;
+}
+
+.shot[data-skip] {
+  animation: none;
+  opacity: 0;
+}
+
+.line {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7.9%;
+  height: 1px;
+  background: var(--color-text);
+  opacity: 0;
+  transform: translate(-50%, -50%) scaleX(0.35);
+  animation: line-in 160ms var(--ease) both;
+}
+
+.shot {
+  opacity: 0;
+  animation-duration: 2.6s;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+.structure {
+  z-index: 1;
+  animation-name: show-structure;
+}
+
+.material {
+  z-index: 2;
+  animation-name: show-material;
+}
+
+.place {
+  z-index: 3;
+  animation-name: show-place;
+}
+
+.identity {
+  z-index: 4;
+  animation-name: show-identity;
+}
+
+.brand {
+  z-index: 5;
+  animation-name: show-brand;
+}
+
+.movement {
+  z-index: 6;
+  animation-name: show-movement;
+}
+
+.reveal {
+  z-index: 7;
+  animation-name: show-reveal;
+}
+
+@keyframes line-in {
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scaleX(1);
+  }
+}
+
+@keyframes show-structure {
+  0%,
+  5.625% {
+    opacity: 0;
+  }
+
+  19.375%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes show-material {
+  0%,
+  16.25% {
+    opacity: 0;
+  }
+
+  30.625%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes show-place {
+  0%,
+  26.875% {
+    opacity: 0;
+  }
+
+  46.25%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes show-identity {
+  0%,
+  42.5% {
+    opacity: 0;
+  }
+
+  58.125%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes show-brand {
+  0%,
+  54.375% {
+    opacity: 0;
+  }
+
+  66.875%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes show-movement {
+  0%,
+  63.125% {
+    opacity: 0;
+  }
+
+  78.75%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes show-reveal {
+  0%,
+  75% {
+    opacity: 0;
+  }
+
+  89.375%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes intro-exit {
+  0%,
+  86.875% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .stage[data-art='portrait'] {
+    width: 100%;
+    height: 100%;
+  }
+
+  .stage[data-art='portrait'] .shot img {
+    object-fit: cover;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro {
+    display: none;
+  }
+}

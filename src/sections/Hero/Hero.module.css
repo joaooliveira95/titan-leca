@@ -39,12 +39,26 @@
 }
 
 .title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.08em;
   margin-bottom: 1.35rem;
   font-size: var(--text-display);
   font-weight: 750;
   letter-spacing: var(--tracking-display);
   line-height: var(--leading-display);
   text-transform: uppercase;
+}
+
+.mark {
+  padding: 0.04em 0.1em 0.07em;
+  background: var(--color-accent);
+  line-height: 0.84;
+}
+
+.rest {
+  line-height: 0.86;
 }
 
 .lede {
@@ -136,11 +150,19 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .rise {
+  :global(html:not(.is-intro):not(.is-revealing)) .rise {
     animation: rise 0.8s var(--ease) both;
   }
 
-  .frame img {
+  :global(html.is-intro:not(.is-revealing)) .rise:not(.media) {
+    opacity: 0;
+  }
+
+  :global(html.is-revealing) .rise:not(.media) {
+    animation: reveal 0.45s var(--ease) both;
+  }
+
+  :global(html:not(.is-intro):not(.is-revealing)) .frame img {
     animation: imageIn 1.05s var(--ease) both;
   }
 
@@ -162,12 +184,39 @@
   .d6 {
     animation-delay: 0.52s;
   }
+
+  :global(html.is-revealing) .d1 {
+    animation-delay: 0.07s;
+  }
+  :global(html.is-revealing) .d2 {
+    animation-delay: 0.15s;
+  }
+  :global(html.is-revealing) .d3 {
+    animation-delay: 0.23s;
+  }
+  :global(html.is-revealing) .d5 {
+    animation-delay: 0.32s;
+  }
+  :global(html.is-revealing) .d6 {
+    animation-delay: 0.4s;
+  }
 }
 
 @keyframes rise {
   from {
     opacity: 0;
     transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
   to {
     opacity: 1;

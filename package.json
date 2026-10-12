@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "images": "node scripts/optimize-images.mjs"
+    "images": "node scripts/optimize-images.mjs",
+    "images:intro": "node scripts/optimize-intro.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",

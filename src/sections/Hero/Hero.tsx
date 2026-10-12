@@ -16,9 +16,8 @@ export function Hero() {
         <div className={styles.intro}>
           <p className={`${styles.eyebrow} ${styles.rise} ${styles.d1}`}>Mais que treino</p>
           <h1 id="hero-title" className={`${styles.title} ${styles.rise} ${styles.d2}`}>
-            Movimento
-            <br />
-            com saúde
+            <span className={styles.mark}>Movimento</span>
+            <span className={styles.rest}>com saúde</span>
           </h1>
           <p className={`${styles.lede} ${styles.rise} ${styles.d3}`}>
             Treino, bem-estar e longevidade. Num só espaço.
