@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 scripts/sources
+TITAN FOTOGRAFIAS
 dist
 dist-ssr
 *.local

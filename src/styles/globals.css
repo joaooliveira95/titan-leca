@@ -30,6 +30,9 @@
 
 html {
   overflow-x: clip;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  color-scheme: only light;
   -webkit-text-size-adjust: 100%;
   scrollbar-color: var(--color-accent) var(--color-dark);
   scrollbar-width: auto;

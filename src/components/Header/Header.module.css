@@ -12,9 +12,16 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  :global(html.is-revealing) .header {
+  :global(html.is-revealing:not(.intro-settled)) .header {
     animation: header-in 0.5s var(--ease) both;
   }
+}
+
+/* A transform on the header traps the fixed menu inside the bar. */
+:global(html.intro-settled) .header,
+.header:has(.open) {
+  animation: none;
+  transform: none;
 }
 
 @keyframes header-in {
@@ -122,19 +129,34 @@
   bottom: 0;
 }
 
-.burger[data-open] span:first-child {
-  top: 0.28rem;
-  transform: rotate(40deg);
+.closeLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
-.burger[data-open] span:last-child {
-  bottom: 0.28rem;
-  transform: rotate(-40deg);
+.closeIcon {
+  width: 0.85rem;
+  height: 0.85rem;
 }
 
 @media (max-width: 767px) {
   .menuButton {
     display: inline-flex;
+  }
+
+  .menuButton[data-open] {
+    position: fixed;
+    top: 1.05rem;
+    right: var(--page-padding);
+    z-index: 70;
+    width: auto;
+    height: 2.75rem;
   }
 
   .nav {
@@ -167,13 +189,34 @@
   .links {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.15rem;
+    gap: 1.15rem;
   }
 
   .link {
+    display: block;
     font-size: clamp(2rem, 10vw, 3.1rem);
     font-weight: 700;
     letter-spacing: -0.03em;
-    padding-block: 0.2rem;
+    line-height: 1;
+    padding: 0 0 0.85rem;
+    background-image: none;
+  }
+
+  .link::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 1px;
+    margin-top: 0.22rem;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.4s var(--ease);
+  }
+
+  .link:hover::after,
+  .link:focus-visible::after,
+  .link[aria-current='true']::after {
+    transform: scaleX(1);
   }
 }

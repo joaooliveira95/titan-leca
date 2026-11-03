@@ -11,7 +11,7 @@ export type PictureAsset = {
 export const images = {
   hero: {
     name: 'hero',
-    alt: 'Atleta a treinar com battle ropes sob uma estrutura de betão, em fotografia a preto e branco.',
+    alt: 'Atletas junto ao paredão de Leça, com o mar e o porto ao fundo.',
     width: 1600,
     height: 2000,
     widths: [640, 960, 1280, 1600],
@@ -20,7 +20,7 @@ export const images = {
   },
   individual: {
     name: 'individual',
-    alt: 'Pormenor das mãos e de um haltere durante um treino individual.',
+    alt: 'Treinador a acompanhar um treino individual numa máquina de cabos.',
     width: 1200,
     height: 1500,
     widths: [480, 720, 960, 1200],
@@ -28,7 +28,7 @@ export const images = {
   },
   duo: {
     name: 'duo',
-    alt: 'Três pessoas a correr em contraluz, com o tratamento laranja da marca.',
+    alt: 'Treino em trio no estúdio, com acompanhamento de um treinador.',
     width: 1200,
     height: 1500,
     widths: [480, 720, 960, 1200],
@@ -36,7 +36,7 @@ export const images = {
   },
   group: {
     name: 'group',
-    alt: 'Fila de kettlebells preparados para uma aula de grupo.',
+    alt: 'Aula de grupo no estúdio, com várias pessoas a treinar em simultâneo.',
     width: 1200,
     height: 1500,
     widths: [480, 720, 960, 1200],
@@ -44,7 +44,7 @@ export const images = {
   },
   studio: {
     name: 'studio',
-    alt: 'Interior de um estúdio de treino com luz natural, passadeiras e zona de pesos.',
+    alt: 'Sala de treino do estúdio, com racks, espelhos e luz linear.',
     width: 2000,
     height: 1334,
     widths: [800, 1200, 1600, 2000],

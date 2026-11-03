@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
 
 const dir = path.dirname(fileURLToPath(import.meta.url))
-const sources = path.join(dir, 'sources')
+const sources = path.join(dir, '../TITAN FOTOGRAFIAS')
 const outDir = path.join(dir, '../public/images')
 
 await mkdir(outDir, { recursive: true })
@@ -12,68 +12,72 @@ await mkdir(outDir, { recursive: true })
 const jobs = [
   {
     name: 'hero',
-    file: 'hero-e.jpg',
+    file: '1-201.jpg',
     width: 1600,
     height: 2000,
-    position: 'right',
-    grade: 'bw',
+    position: 'centre',
+    grade: 'place',
     widths: [640, 960, 1280, 1600],
   },
   {
     name: 'individual',
-    file: 'hero-a.jpg',
+    file: '1-45.jpg',
     width: 1200,
     height: 1500,
-    position: 'left',
-    grade: 'bw',
+    position: 'north',
+    grade: 'editorial',
     widths: [480, 720, 960, 1200],
   },
   {
     name: 'duo',
-    file: 'run-b.jpg',
+    file: '1-26.jpg',
     width: 1200,
     height: 1500,
-    position: 'centre',
-    grade: 'orange',
+    position: 'north',
+    grade: 'editorial',
     widths: [480, 720, 960, 1200],
   },
   {
     name: 'group',
-    file: 'kb-c.jpg',
+    file: '1-112.jpg',
     width: 1200,
     height: 1500,
     position: 'centre',
-    grade: 'bw',
+    grade: 'editorial',
+    trim: 0.62,
     widths: [480, 720, 960, 1200],
   },
   {
     name: 'studio',
-    file: 'gym-d.jpg',
+    file: '1-18.jpg',
     width: 2000,
     height: 1334,
     position: 'centre',
-    grade: 'warm',
+    grade: 'editorial',
     widths: [800, 1200, 1600, 2000],
   },
 ]
 
-async function grade(input, { width, height, position, grade: mode }) {
-  let pipeline = sharp(input).rotate().resize(width, height, { fit: 'cover', position })
-
-  if (mode === 'bw') {
-    pipeline = pipeline.grayscale().linear(1.08, -8).sharpen({ sigma: 0.4 })
-  } else if (mode === 'warm') {
-    pipeline = pipeline.modulate({ saturation: 0.42, brightness: 1.04 }).tint({ r: 226, g: 212, b: 190 })
-  } else if (mode === 'orange') {
-    const gray = await pipeline.clone().grayscale().linear(1.22, -18).toBuffer()
-    const orange = await sharp({
-      create: { width, height, channels: 3, background: { r: 255, g: 62, b: 10 } },
+async function grade(input, { width, height, position, grade: mode, trim }) {
+  const oriented = await sharp(input).rotate().toBuffer()
+  const meta = await sharp(oriented).metadata()
+  let img = sharp(oriented)
+  if (trim) {
+    img = sharp(oriented).extract({
+      left: 0,
+      top: 0,
+      width: Math.round(meta.width * trim),
+      height: meta.height,
     })
-      .png()
-      .toBuffer()
-    pipeline = sharp(gray)
-      .composite([{ input: orange, blend: 'multiply' }])
-      .modulate({ brightness: 1.05, saturation: 1.12 })
+  }
+  let pipeline = img.resize(width, height, { fit: 'cover', position })
+
+  if (mode === 'place') {
+    pipeline = pipeline.modulate({ saturation: 0.8, brightness: 1.02 }).linear(1.05, -8)
+  } else if (mode === 'editorial') {
+    pipeline = pipeline
+      .modulate({ saturation: 0.72, brightness: 1.05 })
+      .tint({ r: 232, g: 220, b: 204 })
   }
 
   return pipeline.png().toBuffer()
@@ -104,7 +108,7 @@ for (const job of jobs) {
 }
 
 const hero = await sharp(path.join(outDir, 'hero-1600.avif'))
-  .resize(1200, 630, { fit: 'cover', position: 'right' })
+  .resize(1200, 630, { fit: 'cover', position: 'centre' })
   .jpeg({ quality: 74, mozjpeg: true })
   .toFile(path.join(outDir, 'og.jpg'))
 

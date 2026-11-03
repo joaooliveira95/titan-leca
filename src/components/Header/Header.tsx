@@ -138,15 +138,25 @@ export function Header() {
           ref={buttonRef}
           type="button"
           className={styles.menuButton}
+          data-open={open ? '' : undefined}
           aria-expanded={open}
           aria-controls={menuId}
+          aria-label={open ? 'Fechar menu' : 'Abrir menu'}
           onClick={() => setOpen((value) => !value)}
         >
-          <span className={styles.burger} data-open={open ? '' : undefined}>
-            <span />
-            <span />
-          </span>
-          <span className="srOnly">{open ? 'Fechar menu' : 'Abrir menu'}</span>
+          {open ? (
+            <span className={styles.closeLabel}>
+              Fechar
+              <svg className={styles.closeIcon} viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M3.5 3.5 12.5 12.5M12.5 3.5 3.5 12.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              </svg>
+            </span>
+          ) : (
+            <span className={styles.burger}>
+              <span />
+              <span />
+            </span>
+          )}
         </button>
         <nav
           ref={navRef}
