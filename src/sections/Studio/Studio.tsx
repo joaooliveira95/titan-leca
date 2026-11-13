@@ -7,7 +7,13 @@ import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { images } from '../../data/images'
 import styles from './Studio.module.css'
 
-const studioFilm = '/videos/studio.mp4'
+const studioWide = '/videos/studio.mp4'
+const studioPortrait = '/videos/studio-portrait.mp4'
+const portraitQuery = '(max-width: 767px)'
+
+function filmSource() {
+  return window.matchMedia(portraitQuery).matches ? studioPortrait : studioWide
+}
 
 function prefersSaveData() {
   const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
@@ -22,6 +28,8 @@ export function Studio() {
   const [live, setLive] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const [sound, setSound] = useState(false)
+  const soundRef = useRef(sound)
+  soundRef.current = sound
 
   useEffect(() => {
     const section = sectionRef.current
@@ -35,26 +43,41 @@ export function Studio() {
     if (!section || !video) return
 
     video.muted = true
-    video.setAttribute('fetchpriority', 'low')
+    video.preload = 'auto'
 
-    const arm = () => {
-      if (video.getAttribute('src')) return
-      video.preload = 'metadata'
-      video.src = studioFilm
+    const useSource = (keepPlace: boolean) => {
+      const next = filmSource()
+      const current = video.currentSrc || video.getAttribute('src') || ''
+      if (current.endsWith(next)) return
+      const time = keepPlace ? video.currentTime : 0
+      const playing = keepPlace && !video.paused
+      delete video.dataset.ready
+      video.preload = 'auto'
+      video.src = next
+      video.muted = !soundRef.current
+      if (time <= 0.25 && !playing) return
+      const resume = () => {
+        video.currentTime = time
+        if (playing) video.play().catch(() => {})
+        video.removeEventListener('loadedmetadata', resume)
+      }
+      video.addEventListener('loadedmetadata', resume)
     }
 
+    const arm = () => useSource(false)
+
     const reveal = () => {
+      if (video.readyState < 2) return
       video.dataset.ready = 'true'
       photoRef.current?.setAttribute('data-live', '')
       setLive(true)
     }
 
-    const preload = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) arm()
-      },
-      { rootMargin: '35% 0px', threshold: 0 },
-    )
+    const hold = () => {
+      delete video.dataset.ready
+      photoRef.current?.removeAttribute('data-live')
+      setLive(false)
+    }
 
     const playback = new IntersectionObserver(
       ([entry]) => {
@@ -81,16 +104,25 @@ export function Studio() {
       }
     }
 
-    preload.observe(section)
+    const layout = window.matchMedia(portraitQuery)
+    const onLayout = () => {
+      if (!video.getAttribute('src')) return
+      useSource(true)
+    }
+
     playback.observe(section)
-    video.addEventListener('playing', reveal)
+    video.addEventListener('loadeddata', reveal)
+    video.addEventListener('error', hold)
+    reveal()
     document.addEventListener('visibilitychange', onVisibility)
+    layout.addEventListener('change', onLayout)
 
     return () => {
-      preload.disconnect()
       playback.disconnect()
-      video.removeEventListener('playing', reveal)
+      video.removeEventListener('loadeddata', reveal)
+      video.removeEventListener('error', hold)
       document.removeEventListener('visibilitychange', onVisibility)
+      layout.removeEventListener('change', onLayout)
       video.pause()
     }
   }, [reduced])
@@ -143,10 +175,11 @@ export function Studio() {
           <video
             ref={videoRef}
             className={styles.video}
+            src={filmSource()}
             muted={!sound}
             playsInline
             loop
-            preload="none"
+            preload="auto"
             aria-hidden="true"
             tabIndex={-1}
             disablePictureInPicture
