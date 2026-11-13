@@ -7,11 +7,11 @@
   --color-dark: #121212;
   --color-dark-soft: #1c1c1c;
   --color-cream: #f7f4ee;
-  --color-accent: #ff4e12;
+  --color-accent: #adbba7;
   --color-on-accent: #1a120e;
   --color-footer: #0e0e0e;
 
-  --font: 'Outfit', 'Outfit Fallback', 'Avenir Next', 'Segoe UI', sans-serif;
+  --font: "Outfit", "Outfit Fallback", "Avenir Next", "Segoe UI", sans-serif;
 
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;

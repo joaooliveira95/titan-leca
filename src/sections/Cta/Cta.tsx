@@ -20,10 +20,10 @@ export function Cta() {
       <div className={styles.panel}>
         <Reveal delay={90}>
           <div className={styles.actions}>
-            <Button href={`mailto:${site.email}?subject=Marcar%20experi%C3%AAncia`} variant="ink">
+            <Button href={site.whatsapp} variant="ink" external>
               Marcar experiência
             </Button>
-            <Button href="#contactos" variant="ghost">
+            <Button href={site.whatsapp} variant="ghost" external>
               Falar connosco
             </Button>
           </div>

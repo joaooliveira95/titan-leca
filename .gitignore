@@ -10,6 +10,8 @@ lerna-debug.log*
 node_modules
 scripts/sources
 TITAN FOTOGRAFIAS
+public/videos/*.mov
+.video-preview
 dist
 dist-ssr
 *.local

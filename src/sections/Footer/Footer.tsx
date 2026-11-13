@@ -29,6 +29,8 @@ export function Footer() {
               ))}
             </span>
           </a>
+          <a href={`tel:${site.phoneHref}`}>{site.phone}</a>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
         </address>
         <ul className={styles.social}>
           <li>

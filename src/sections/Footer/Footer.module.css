@@ -47,6 +47,8 @@
 }
 
 .address {
+  display: grid;
+  gap: 0.7rem;
   font-style: normal;
 }
 

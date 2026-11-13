@@ -1,17 +1,159 @@
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '../../components/Button/Button'
 import { Logo } from '../../components/Logo/Logo'
 import { Picture } from '../../components/Picture/Picture'
 import { Reveal } from '../../components/Reveal/Reveal'
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { images } from '../../data/images'
 import styles from './Studio.module.css'
 
+const studioFilm = '/videos/studio.mp4'
+
+function prefersSaveData() {
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+  return connection?.saveData === true
+}
+
 export function Studio() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const photoRef = useRef<HTMLDivElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const reduced = usePrefersReducedMotion()
+  const [live, setLive] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const [sound, setSound] = useState(false)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    const video = videoRef.current
+    if (reduced || prefersSaveData()) {
+      photoRef.current?.removeAttribute('data-live')
+      setLive(false)
+      setSound(false)
+      return
+    }
+    if (!section || !video) return
+
+    video.muted = true
+    video.setAttribute('fetchpriority', 'low')
+
+    const arm = () => {
+      if (video.getAttribute('src')) return
+      video.preload = 'metadata'
+      video.src = studioFilm
+    }
+
+    const reveal = () => {
+      video.dataset.ready = 'true'
+      photoRef.current?.setAttribute('data-live', '')
+      setLive(true)
+    }
+
+    const preload = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) arm()
+      },
+      { rootMargin: '35% 0px', threshold: 0 },
+    )
+
+    const playback = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) return
+        if (entry.intersectionRatio >= 0.35) {
+          arm()
+          video.play().catch(() => {})
+          return
+        }
+        if (!entry.isIntersecting) video.pause()
+      },
+      { threshold: [0, 0.35] },
+    )
+
+    const onVisibility = () => {
+      if (document.hidden) {
+        video.pause()
+        return
+      }
+      const rect = section.getBoundingClientRect()
+      const visible = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0)
+      if (rect.height > 0 && visible / rect.height >= 0.35) {
+        video.play().catch(() => {})
+      }
+    }
+
+    preload.observe(section)
+    playback.observe(section)
+    video.addEventListener('playing', reveal)
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => {
+      preload.disconnect()
+      playback.disconnect()
+      video.removeEventListener('playing', reveal)
+      document.removeEventListener('visibilitychange', onVisibility)
+      video.pause()
+    }
+  }, [reduced])
+
+  useEffect(() => {
+    const onChange = () => setExpanded(document.fullscreenElement === photoRef.current)
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [])
+
+  const toggleFullscreen = () => {
+    const photo = photoRef.current
+    const video = videoRef.current
+    if (!photo || !video) return
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {})
+      return
+    }
+
+    if (typeof photo.requestFullscreen === 'function') {
+      photo.requestFullscreen().catch(() => {
+        const ios = video as HTMLVideoElement & { webkitEnterFullscreen?: () => void }
+        ios.webkitEnterFullscreen?.()
+      })
+      return
+    }
+
+    const ios = video as HTMLVideoElement & { webkitEnterFullscreen?: () => void }
+    ios.webkitEnterFullscreen?.()
+  }
+
+  const toggleSound = () => {
+    const video = videoRef.current
+    if (!video) return
+    const next = video.muted
+    video.muted = !next
+    if (!video.muted) {
+      video.volume = 1
+      video.play().catch(() => {})
+    }
+    setSound(!video.muted)
+  }
+
   return (
-    <section id="sobre" className={styles.studio} aria-labelledby="studio-title">
-      <div className={styles.photo}>
+    <section ref={sectionRef} id="sobre" className={styles.studio} aria-labelledby="studio-title">
+      <div ref={photoRef} className={styles.photo}>
         <Picture image={images.studio} />
+        {reduced || prefersSaveData() ? null : (
+          <video
+            ref={videoRef}
+            className={styles.video}
+            muted={!sound}
+            playsInline
+            loop
+            preload="none"
+            aria-hidden="true"
+            tabIndex={-1}
+            disablePictureInPicture
+          />
+        )}
         <div className={styles.scrim} />
-        <div className={styles.photoCopy}>
+        <div className={styles.photoCopy} inert={live ? true : undefined}>
           <Reveal>
             <p className={styles.kicker}>Um espaço em Leça</p>
             <h2 id="studio-title">
@@ -26,6 +168,74 @@ export function Studio() {
             </Button>
           </Reveal>
         </div>
+        {reduced || prefersSaveData() ? null : (
+          <div className={styles.controls}>
+            <button
+              type="button"
+              className={styles.control}
+              tabIndex={live ? 0 : -1}
+              aria-hidden={live ? undefined : true}
+              aria-pressed={sound}
+              aria-label={sound ? 'Silenciar' : 'Som'}
+              onClick={toggleSound}
+            >
+              {sound ? (
+                <svg className={styles.controlIcon} viewBox="0 0 16 16" aria-hidden="true">
+                  <path
+                    d="M2.5 6.4h2.1L8 3.6v8.8L4.6 9.6H2.5V6.4zM10.2 6.1a2.8 2.8 0 0 1 0 3.8M11.8 4.6a5 5 0 0 1 0 6.8"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : (
+                <svg className={styles.controlIcon} viewBox="0 0 16 16" aria-hidden="true">
+                  <path
+                    d="M2.5 6.4h2.1L8 3.6v8.8L4.6 9.6H2.5V6.4zM11 6.2l3 3.6M14 6.2l-3 3.6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </button>
+            <button
+              type="button"
+              className={styles.control}
+              tabIndex={live ? 0 : -1}
+              aria-hidden={live ? undefined : true}
+              aria-label={expanded ? 'Fechar' : 'Ecrã inteiro'}
+              onClick={toggleFullscreen}
+            >
+              {expanded ? (
+                <svg className={styles.controlIcon} viewBox="0 0 16 16" aria-hidden="true">
+                  <path
+                    d="M3.5 3.5 12.5 12.5M12.5 3.5 3.5 12.5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              ) : (
+                <svg className={styles.controlIcon} viewBox="0 0 16 16" aria-hidden="true">
+                  <path
+                    d="M6 2.5H2.5V6M10 2.5h3.5V6M6 13.5H2.5V10M10 13.5h3.5V10"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+        )}
       </div>
       <div className={styles.side}>
         <Reveal delay={80}>

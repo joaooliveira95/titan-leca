@@ -9,6 +9,7 @@ type Props = {
   variant?: Variant
   size?: 'default' | 'compact'
   className?: string
+  external?: boolean
 }
 
 export function Button({
@@ -17,13 +18,14 @@ export function Button({
   variant = 'solid',
   size = 'default',
   className,
+  external = false,
 }: Props) {
   const classes = [styles.button, styles[variant], styles[size], className]
     .filter(Boolean)
     .join(' ')
 
   return (
-    <a href={href} className={classes}>
+    <a href={href} className={classes} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}>
       <span>{children}</span>
       <svg className={styles.arrow} viewBox="0 0 16 16" aria-hidden="true">
         <path
