@@ -44,7 +44,7 @@ export const images = {
   },
   studio: {
     name: 'studio',
-    alt: 'Sala de treino do estúdio, com racks, espelhos e luz linear.',
+    alt: 'Aula no estúdio, com o grupo deitado no chão e dois treinadores ao fundo.',
     width: 2000,
     height: 1334,
     widths: [800, 1200, 1600, 2000],

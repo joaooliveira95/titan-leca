@@ -49,7 +49,7 @@ const jobs = [
   },
   {
     name: 'studio',
-    file: '1-18.jpg',
+    file: '1-105.jpg',
     width: 2000,
     height: 1334,
     position: 'centre',

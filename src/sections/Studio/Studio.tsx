@@ -43,6 +43,10 @@ export function Studio() {
     if (!section || !video) return
 
     video.muted = true
+    video.defaultMuted = true
+    video.playsInline = true
+    video.setAttribute('playsinline', '')
+    video.setAttribute('webkit-playsinline', '')
     video.preload = 'auto'
 
     const useSource = (keepPlace: boolean) => {
@@ -74,22 +78,30 @@ export function Studio() {
     }
 
     const hold = () => {
+      const code = video.error?.code
+      if (code !== 3 && code !== 4) return
       delete video.dataset.ready
       photoRef.current?.removeAttribute('data-live')
       setLive(false)
     }
 
+    const tryPlay = () => {
+      video.muted = !soundRef.current
+      video.play().then(reveal).catch(() => {})
+    }
+
+    const frame = photoRef.current ?? section
     const playback = new IntersectionObserver(
       ([entry]) => {
         if (!entry) return
-        if (entry.intersectionRatio >= 0.35) {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.2) {
           arm()
-          video.play().catch(() => {})
+          tryPlay()
           return
         }
         if (!entry.isIntersecting) video.pause()
       },
-      { threshold: [0, 0.35] },
+      { threshold: [0, 0.2] },
     )
 
     const onVisibility = () => {
@@ -97,11 +109,15 @@ export function Studio() {
         video.pause()
         return
       }
-      const rect = section.getBoundingClientRect()
+      const rect = frame.getBoundingClientRect()
       const visible = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0)
-      if (rect.height > 0 && visible / rect.height >= 0.35) {
-        video.play().catch(() => {})
-      }
+      if (rect.height > 0 && visible / rect.height >= 0.2) tryPlay()
+    }
+
+    const onGesture = () => {
+      const rect = frame.getBoundingClientRect()
+      const onScreen = rect.bottom > 0 && rect.top < window.innerHeight
+      if (onScreen) tryPlay()
     }
 
     const layout = window.matchMedia(portraitQuery)
@@ -110,18 +126,26 @@ export function Studio() {
       useSource(true)
     }
 
-    playback.observe(section)
+    playback.observe(frame)
     video.addEventListener('loadeddata', reveal)
+    video.addEventListener('canplay', reveal)
+    video.addEventListener('playing', reveal)
     video.addEventListener('error', hold)
     reveal()
     document.addEventListener('visibilitychange', onVisibility)
+    window.addEventListener('touchend', onGesture, { passive: true })
+    window.addEventListener('pointerup', onGesture)
     layout.addEventListener('change', onLayout)
 
     return () => {
       playback.disconnect()
       video.removeEventListener('loadeddata', reveal)
+      video.removeEventListener('canplay', reveal)
+      video.removeEventListener('playing', reveal)
       video.removeEventListener('error', hold)
       document.removeEventListener('visibilitychange', onVisibility)
+      window.removeEventListener('touchend', onGesture)
+      window.removeEventListener('pointerup', onGesture)
       layout.removeEventListener('change', onLayout)
       video.pause()
     }
